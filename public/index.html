@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arivu Family Hub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#04050a;--bg2:#080c14;--bg3:#0d1220;--bdr:rgba(124,107,255,.18);--acc:#7c6bff;--acc2:#6355e0;--txt:#e2e8f0;--txt2:#94a3b8;--green:#22c55e;--red:#ef4444;--orange:#f59e0b;--radius:12px}
+body{background:var(--bg);color:var(--txt);font-family:"Segoe UI",system-ui,-apple-system,sans-serif;min-height:100vh}
+a{color:var(--acc);text-decoration:none}
+
+/* Login */
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.login-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:20px;padding:40px;width:100%;max-width:380px;text-align:center}
+.login-card h2{font-size:22px;font-weight:700;margin-bottom:6px;color:#c4b5fd}
+.login-card p{color:var(--txt2);font-size:13px;margin-bottom:24px}
+
+/* Layout */
+header{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;gap:12px}
+header h1{font-size:18px;font-weight:700;color:#c4b5fd}
+.user-bar{margin-left:auto;display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;border:2px solid var(--bdr)}
+.main{flex:1;padding:20px;max-width:1280px;margin:0 auto;width:100%}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--radius);padding:18px;overflow:hidden}
+.card h2{font-size:14px;font-weight:600;color:#c4b5fd;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-wide{grid-column:span 2}
+
+/* Inputs */
+input,textarea,select{width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:14px;font-family:inherit;outline:none;margin-bottom:8px;transition:border .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--acc)}
+button{padding:8px 16px;background:var(--acc);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+button:hover{background:var(--acc2)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-ghost{background:rgba(255,255,255,.08);color:var(--txt)}
+.btn-ghost:hover{background:rgba(255,255,255,.14)}
+.btn-danger{background:var(--red)}
+.btn-danger:hover{background:#dc2626}
+
+/* Chat */
+.chat-box{height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:10px;background:var(--bg3);border-radius:10px;margin-bottom:10px}
+.chat-msg{padding:8px 14px;border-radius:12px;font-size:14px;max-width:80%;line-height:1.5;word-break:break-word}
+.chat-msg.me{background:var(--acc);align-self:flex-end;border-bottom-right-radius:4px}
+.chat-msg.other{background:var(--bg2);border:1px solid var(--bdr);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-msg .meta{font-size:11px;opacity:.55;margin-top:3px}
+.chat-msg .sender{font-weight:600;font-size:12px;margin-bottom:2px}
+.chat-input{display:flex;gap:8px}
+.chat-input input{margin:0;flex:1}
+.typing-indicator{font-size:12px;color:var(--txt2);padding:4px 0;min-height:20px}
+
+/* Todos */
+.todo-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:14px}
+.todo-item:last-child{border:none}
+.todo-text.done{text-decoration:line-through;opacity:.45}
+.todo-meta{margin-left:auto;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.priority-badge{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;text-transform:uppercase}
+.priority-urgent{background:rgba(239,68,68,.2);color:var(--red)}
+.priority-high{background:rgba(245,158,11,.2);color:var(--orange)}
+.priority-normal{background:rgba(124,107,255,.15);color:var(--acc)}
+.priority-low{background:rgba(148,163,184,.15);color:var(--txt2)}
+
+/* Members */
+.member{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.member:last-child{border:none}
+.dot{width:8px;height:8px;border-radius:50%}
+.dot-online{background:var(--green)}
+.dot-offline{background:#475569}
+
+/* Notes */
+.note-card{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.note-card:last-child{border:none}
+.note-title{font-weight:600;font-size:14px}
+.note-meta{font-size:11px;color:var(--txt2);margin-bottom:2px}
+.note-body{font-size:13px;color:var(--txt2);margin-top:4px}
+
+/* Events */
+.event-item{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.event-item:last-child{border:none}
+.event-date{font-size:11px;color:var(--acc);font-weight:600}
+.event-title{font-size:14px;font-weight:500}
+
+/* Weather */
+.weather-temp{font-size:52px;font-weight:700;color:#c4b5fd;text-align:center;padding:12px 0}
+.weather-desc{text-align:center;color:var(--txt2);font-size:14px}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;font-size:13px;z-index:999;animation:slideIn .3s ease}
+.toast.error{border-color:var(--red);color:var(--red)}
+.toast.success{border-color:var(--green);color:var(--green)}
+@keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal{background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;padding:24px;width:90%;max-width:420px}
+.modal h3{font-size:16px;color:#c4b5fd;margin-bottom:16px}
+
+/* Responsive */
+@media(max-width:768px){
+  .card-wide{grid-column:span 1}
+  .grid{grid-template-columns:1fr}
+  header{padding:10px 16px}
+  .main{padding:12px}
+  .chat-box{height:260px}
+}
+
+/* Call UI */
+.call-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;gap:16px}
+.call-overlay .call-avatar{font-size:64px}
+.call-overlay .call-name{font-size:22px;font-weight:700;color:#c4b5fd}
+.call-overlay .call-status{font-size:14px;color:var(--txt2)}
+.call-overlay .call-timer{font-size:28px;font-weight:300;color:var(--txt);margin:8px 0}
+.call-controls{display:flex;gap:16px;margin-top:20px}
+.call-btn{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;border:none;cursor:pointer;transition:all .15s}
+.call-btn:hover{transform:scale(1.1)}
+.call-btn-red{background:var(--red)}
+.call-btn-green{background:var(--green)}
+.call-btn-ghost{background:rgba(255,255,255,.12);color:#fff}
+.call-btn-ghost.active{background:var(--acc)}
+.audio-select{margin-top:16px;display:flex;align-items:center;gap:8px}
+.audio-select select{width:auto;margin:0;font-size:12px;padding:6px 10px;max-width:220px}
+.audio-select label{font-size:12px;color:var(--txt2)}
+
+/* Voice message */
+.voice-msg{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(124,107,255,.15);border-radius:20px}
+.voice-msg button{background:none;border:none;color:var(--acc);font-size:18px;cursor:pointer;padding:0}
+.voice-msg .vm-bar{flex:1;height:4px;background:rgba(255,255,255,.15);border-radius:2px;position:relative;overflow:hidden}
+.voice-msg .vm-fill{height:100%;background:var(--acc);border-radius:2px;transition:width .1s}
+.voice-msg .vm-dur{font-size:11px;color:var(--txt2);min-width:32px}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(124,107,255,.3);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- ── Login Screen ────────────────────────────────────── -->
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <div style="font-size:48px;margin-bottom:14px">🏠</div>
+    <h2>Family Hub</h2>
+    <p>Sign in to your family space</p>
+    <input type="text" id="login-user" placeholder="Username" autocomplete="username">
+    <input type="password" id="login-pwd" placeholder="Password" autocomplete="current-password">
+    <button id="login-btn" style="width:100%;margin-top:4px;padding:12px">Sign In →</button>
+    <div id="login-error" style="color:var(--red);font-size:13px;margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- ── App ─────────────────────────────────────────────── -->
+<div id="app" style="display:none;flex-direction:column;min-height:100vh">
+  <header>
+    <span style="font-size:22px">🏠</span>
+    <h1>Family Hub</h1>
+    <div style="display:flex;align-items:center;gap:6px;margin-left:12px">
+      <div class="dot dot-online" id="ws-dot" title="Connected"></div>
+      <span style="font-size:11px;color:var(--txt2)" id="ws-status">Live</span>
+    </div>
+    <div class="user-bar">
+      <div class="avatar" id="user-avatar">👤</div>
+      <span id="user-name" style="font-size:14px;font-weight:600"></span>
+      <button class="btn-sm btn-ghost" id="btn-export" title="Export Data">📥</button>
+      <button class="btn-sm btn-ghost" id="btn-settings">⚙️</button>
+      <button class="btn-sm btn-ghost" id="btn-logout">Logout</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="grid">
+      <!-- Chat -->
+      <div class="card card-wide">
+        <h2>💬 Family Chat <button class="btn-sm btn-ghost" id="btn-call" style="margin-left:auto;font-size:16px" title="Voice Call">📞</button></h2>
+        <div class="chat-box" id="chat-box"></div>
+        <div class="typing-indicator" id="typing-indicator"></div>
+        <div class="chat-input">
+          <input type="text" id="chat-input" placeholder="Type a message..." maxlength="2000">
+          <button class="btn-sm btn-ghost" id="btn-voice-record" title="Hold to record voice message" style="font-size:18px;padding:6px 10px">🎙️</button>
+          <button id="btn-send">Send</button>
+        </div>
+      </div>
+
+      <!-- Todos -->
+      <div class="card">
+        <h2>✅ Family Tasks</h2>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input type="text" id="todo-input" placeholder="Add task..." style="margin:0;flex:1" maxlength="500">
+          <select id="todo-priority" style="width:auto;margin:0">
+            <option value="normal">Normal</option>
+            <option value="low">Low</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <input type="date" id="todo-due" style="margin:0;flex:1">
+          <button class="btn-sm" id="btn-add-todo">Add</button>
+        </div>
+        <div id="todos-list"></div>
+        <button class="btn-sm btn-ghost" id="btn-clear-completed" style="margin-top:10px;display:none">Clear completed tasks</button>
+      </div>
+
+      <!-- Members -->
+      <div class="card">
+        <h2>👨‍👩‍👦 Members</h2>
+        <div id="members-list"></div>
+      </div>
+
+      <!-- Weather -->
+      <div class="card">
+        <h2>🌤️ Weather</h2>
+        <div class="weather-temp" id="weather-temp">--°C</div>
+        <div class="weather-desc" id="weather-desc">Loading...</div>
+        <div style="text-align:center;color:var(--txt2);font-size:12px;margin-top:8px">Abu Dhabi, UAE</div>
+      </div>
+
+      <!-- Notes -->
+      <div class="card">
+        <h2>📝 Notes</h2>
+        <input type="text" id="note-title" placeholder="Title..." maxlength="200">
+        <textarea id="note-content" rows="3" placeholder="Write a note..." maxlength="5000"></textarea>
+        <button class="btn-sm" id="btn-save-note">Save Note</button>
+        <div id="notes-list" style="margin-top:12px"></div>
+      </div>
+
+      <!-- Events -->
+      <div class="card">
+        <h2>📅 Family Events</h2>
+        <input type="text" id="event-title" placeholder="Event title..." maxlength="200">
+        <div style="display:flex;gap:8px">
+          <input type="date" id="event-date" style="flex:1">
+          <input type="time" id="event-time" style="flex:1">
+        </div>
+        <textarea id="event-desc" rows="2" placeholder="Description (optional)" maxlength="1000"></textarea>
+        <button class="btn-sm" id="btn-add-event">Add Event</button>
+        <div id="events-list" style="margin-top:12px"></div>
+      </div>
+
+      <!-- Shopping List -->
+      <div class="card">
+        <h2>🛒 Shopping Lists</h2>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <input type="text" id="shopping-list-name" placeholder="New list name..." style="margin:0;flex:1" maxlength="100">
+          <button class="btn-sm" id="btn-create-list">Create</button>
+        </div>
+        <div id="shopping-lists"></div>
+        <div id="shopping-items-panel" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr)">
+          <div style="font-weight:600;font-size:13px;color:#c4b5fd;margin-bottom:8px" id="active-list-name"></div>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <input type="text" id="item-name" placeholder="Add item..." style="margin:0;flex:1" maxlength="200">
+            <input type="text" id="item-qty" placeholder="Qty" style="margin:0;width:60px" maxlength="50">
+            <button class="btn-sm" id="btn-add-item">Add</button>
+          </div>
+          <div id="shopping-items-list"></div>
+        </div>
+      </div>
+
+      <!-- Family Journal -->
+      <div class="card">
+        <h2>📓 Family Journal</h2>
+        <input type="text" id="journal-title" placeholder="What happened today?" maxlength="200">
+        <textarea id="journal-content" rows="3" placeholder="Share a memory, a moment, anything..." maxlength="5000"></textarea>
+        <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+          <span style="font-size:12px;color:var(--txt2)">Mood:</span>
+          <select id="journal-mood" style="width:auto;margin:0">
+            <option value="happy">😊 Happy</option>
+            <option value="grateful">🙏 Grateful</option>
+            <option value="excited">🎉 Excited</option>
+            <option value="neutral" selected>😐 Neutral</option>
+            <option value="tired">😴 Tired</option>
+            <option value="sad">😢 Sad</option>
+          </select>
+          <button class="btn-sm" id="btn-save-journal" style="margin-left:auto">Save Entry</button>
+        </div>
+        <div id="journal-list" style="margin-top:8px"></div>
+      </div>
+
+      <!-- Health -->
+      <div class="card">
+        <h2>⚡ System</h2>
+        <div id="health-status" style="font-size:13px">Checking...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Call Overlay ─────────────────────────────────────── -->
+<div class="call-overlay" id="call-overlay" style="display:none">
+  <div class="call-avatar" id="call-avatar">📞</div>
+  <div class="call-name" id="call-peer-name">Calling...</div>
+  <div class="call-status" id="call-status">Connecting...</div>
+  <div class="call-timer" id="call-timer">00:00</div>
+  <div class="audio-select">
+    <label>🔊 Output:</label>
+    <select id="audio-output-select"><option value="default">Default</option></select>
+  </div>
+  <div class="call-controls">
+    <button class="call-btn call-btn-ghost" id="btn-mute" title="Mute">🎤</button>
+    <button class="call-btn call-btn-ghost" id="btn-speaker" title="Speaker">🔊</button>
+    <button class="call-btn call-btn-red" id="btn-hangup" title="Hang Up">📵</button>
+  </div>
+</div>
+
+<!-- ── Incoming Call Overlay ───────────────────────────── -->
+<div class="call-overlay" id="incoming-call" style="display:none">
+  <div class="call-avatar" id="incoming-avatar">📞</div>
+  <div class="call-name" id="incoming-name">Incoming Call</div>
+  <div class="call-status">Voice Call</div>
+  <div class="call-controls">
+    <button class="call-btn call-btn-red" id="btn-decline" title="Decline">📵</button>
+    <button class="call-btn call-btn-green" id="btn-accept" title="Accept">📞</button>
+  </div>
+</div>
+
+<!-- ── Call Target Picker ─────────────────────────────── -->
+<div class="modal-overlay" id="call-picker" style="display:none">
+  <div class="modal">
+    <h3>📞 Call a Family Member</h3>
+    <div id="call-member-list"></div>
+    <button class="btn-ghost" id="btn-close-call-picker" style="margin-top:12px;width:100%">Cancel</button>
+  </div>
+</div>
+
+<!-- ── Settings Modal ──────────────────────────────────── -->
+<div class="modal-overlay" id="settings-modal" style="display:none">
+  <div class="modal">
+    <h3>⚙️ Change Password</h3>
+    <input type="password" id="cur-pwd" placeholder="Current password" autocomplete="current-password">
+    <input type="password" id="new-pwd" placeholder="New password (min 6 chars)" autocomplete="new-password">
+    <input type="password" id="confirm-pwd" placeholder="Confirm new password" autocomplete="new-password">
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="btn-change-pwd">Change Password</button>
+      <button class="btn-ghost" id="btn-close-settings">Cancel</button>
+    </div>
+    <div id="pwd-msg" style="font-size:13px;margin-top:10px"></div>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────
+let token = localStorage.getItem("fh_token");
+let currentUser = null;
+let ws = null;
+let typingTimeout = null;
+let onlineUsers = new Set();
+
+const API = "/api";
+
+// ── Helpers ────────────────────────────────────────────
+function esc(str) {
+  const d = document.createElement("div");
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function toast(msg, type = "info") {
+  const t = document.createElement("div");
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+async function api(path, opts = {}) {
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetch(`${API}${path}`, { ...opts, headers });
+  const data = await res.json();
+  if (!res.ok) {
+    if (res.status === 401 && path !== "/auth/login") { logout(); return null; }
+    throw new Error(data.error || "Request failed");
+  }
+  return data;
+}
+
+function formatTime(iso) {
+  const d = new Date(iso + "Z");
+  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function formatDate(iso) {
+  return new Date(iso).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+}
+
+// ── Auth ───────────────────────────────────────────────
+async function login() {
+  const username = document.getElementById("login-user").value.trim();
+  const password = document.getElementById("login-pwd").value;
+  const errEl = document.getElementById("login-error");
+  errEl.textContent = "";
+
+  if (!username || !password) { errEl.textContent = "Enter username and password"; return; }
+
+  try {
+    const data = await api("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ username, password })
+    });
+    token = data.token;
+    currentUser = data.user;
+    localStorage.setItem("fh_token", token);
+    showApp();
+    requestNotificationPermission();
+  } catch (e) {
+    errEl.textContent = e.message;
+  }
+}
+
+function logout() {
+  token = null;
+  currentUser = null;
+  localStorage.removeItem("fh_token");
+  if (ws) { ws.close(); ws = null; }
+  document.getElementById("login-screen").style.display = "flex";
+  document.getElementById("app").style.display = "none";
+  document.getElementById("login-pwd").value = "";
+  document.getElementById("login-error").textContent = "";
+}
+
+async function tryAutoLogin() {
+  if (!token) return;
+  try {
+    const data = await api("/auth/me");
+    currentUser = data.user;
+    showApp();
+  } catch {
+    logout();
+  }
+}
+
+// ── Show App ───────────────────────────────────────────
+function showApp() {
+  document.getElementById("login-screen").style.display = "none";
+  document.getElementById("app").style.display = "flex";
+  document.getElementById("user-avatar").textContent = currentUser.emoji;
+  document.getElementById("user-avatar").style.background = currentUser.color;
+  document.getElementById("user-name").textContent = currentUser.display_name;
+  loadAll();
+  connectWS();
+}
+
+async function loadAll() {
+  loadMessages();
+  loadTodos();
+  loadNotes();
+  loadEvents();
+  loadMembers();
+  loadWeather();
+  loadShoppingLists();
+  loadJournal();
+  loadHealth();
+}
+
+// ── WebSocket ──────────────────────────────────────────
+function connectWS() {
+  if (ws) ws.close();
+  const proto = location.protocol === "https:" ? "wss:" : "ws:";
+  ws = new WebSocket(`${proto}//${location.host}/ws`);
+
+  ws.onopen = () => {
+    ws.send(JSON.stringify({ type: "auth", token }));
+    setWsStatus(true);
+  };
+
+  ws.onmessage = (e) => {
+    const msg = JSON.parse(e.data);
+    if (msg.type === "new_message") { appendMessage(msg.message); }
+    if (msg.type === "typing") { showTyping(msg.name, msg.emoji); }
+    if (msg.type === "presence") {
+      if (msg.status === "online") onlineUsers.add(msg.userId);
+      else onlineUsers.delete(msg.userId);
+      renderMembers();
+    }
+    // Call signaling
+    if (["call_offer","call_answer","call_ice","call_hangup","call_error","call_ring"].includes(msg.type)) {
+      handleCallSignal(msg);
+    }
+  };
+
+  ws.onclose = () => {
+    setWsStatus(false);
+    setTimeout(() => { if (token) connectWS(); }, 3000);
+  };
+
+  ws.onerror = () => ws.close();
+}
+
+function setWsStatus(connected) {
+  const dot = document.getElementById("ws-dot");
+  const status = document.getElementById("ws-status");
+  dot.className = `dot ${connected ? "dot-online" : "dot-offline"}`;
+  status.textContent = connected ? "Live" : "Reconnecting...";
+}
+
+// ── Messages ───────────────────────────────────────────
+let allMessages = [];
+
+async function loadMessages() {
+  try {
+    const data = await api("/messages?limit=100");
+    if (!data) return;
+    allMessages = data.messages;
+    renderMessages();
+  } catch (e) { console.error("Load messages:", e); }
+}
+
+function renderMessages() {
+  const box = document.getElementById("chat-box");
+  box.innerHTML = allMessages.map(m => {
+    const isMe = m.user_id === currentUser.id;
+    return `<div class="chat-msg ${isMe ? "me" : "other"}">
+      ${!isMe ? `<div class="sender">${esc(m.emoji)} ${esc(m.display_name)}</div>` : ""}
+      ${esc(m.content)}
+      <div class="meta">${formatTime(m.created_at)}</div>
+    </div>`;
+  }).join("");
+  box.scrollTop = box.scrollHeight;
+}
+
+function appendMessage(m) {
+  allMessages.push(m);
+  if (allMessages.length > 200) allMessages = allMessages.slice(-200);
+  renderMessages();
+}
+
+async function sendMessage() {
+  const input = document.getElementById("chat-input");
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = "";
+
+  // Send via WebSocket for instant delivery
+  if (ws && ws.readyState === 1) {
+    ws.send(JSON.stringify({ type: "chat", content: text }));
+  } else {
+    // Fallback to REST
+    try {
+      const data = await api("/messages", { method: "POST", body: JSON.stringify({ content: text }) });
+      if (data) appendMessage(data.message);
+    } catch (e) { toast(e.message, "error"); }
+  }
+}
+
+function showTyping(name, emoji) {
+  const el = document.getElementById("typing-indicator");
+  el.textContent = `${emoji} ${name} is typing...`;
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => { el.textContent = ""; }, 2500);
+}
+
+function emitTyping() {
+  if (ws && ws.readyState === 1) {
+    ws.send(JSON.stringify({ type: "typing" }));
+  }
+}
+
+// ── Todos ──────────────────────────────────────────────
+let allTodos = [];
+
+async function loadTodos() {
+  try {
+    const data = await api("/todos");
+    if (!data) return;
+    allTodos = data.todos;
+    renderTodos();
+  } catch (e) { console.error("Load todos:", e); }
+}
+
+function renderTodos() {
+  const el = document.getElementById("todos-list");
+  if (allTodos.length === 0) { el.innerHTML = '<div style="font-size:13px;color:var(--txt2)">No tasks yet</div>'; return; }
+  el.innerHTML = allTodos.map(t => `
+    <div class="todo-item">
+      <input type="checkbox" ${t.done ? "checked" : ""} onchange="toggleTodo(${t.id}, this.checked)">
+      <div>
+        <span class="todo-text ${t.done ? "done" : ""}">${esc(t.text)}</span>
+        <div style="font-size:11px;color:var(--txt2)">${esc(t.created_by_name)}${t.due_date ? " · Due " + formatDate(t.due_date) : ""}</div>
+      </div>
+      <div class="todo-meta">
+        <span class="priority-badge priority-${t.priority}">${t.priority}</span>
+        <button class="btn-sm btn-ghost" onclick="deleteTodo(${t.id})" title="Delete">✕</button>
+      </div>
+    </div>
+  `).join("");
+  const clearBtn = document.getElementById("btn-clear-completed");
+  clearBtn.style.display = allTodos.some(t => t.done) ? "inline-block" : "none";
+}
+
+async function addTodo() {
+  const input = document.getElementById("todo-input");
+  const text = input.value.trim();
+  if (!text) return;
+  const priority = document.getElementById("todo-priority").value;
+  const due = document.getElementById("todo-due").value || null;
+  try {
+    const data = await api("/todos", {
+      method: "POST",
+      body: JSON.stringify({ text, priority, due_date: due })
+    });
+    if (data) { allTodos.unshift(data.todo); renderTodos(); }
+    input.value = "";
+    document.getElementById("todo-due").value = "";
+    document.getElementById("todo-priority").value = "normal";
+  } catch (e) { toast(e.message, "error"); }
+}
+
+async function toggleTodo(id, done) {
+  try {
+    const data = await api(`/todos/${id}`, { method: "PATCH", body: JSON.stringify({ done }) });
+    if (data) { const i = allTodos.findIndex(t => t.id === id); if (i >= 0) allTodos[i] = data.todo; renderTodos(); }
+  } catch (e) { toast(e.message, "error"); }
+}
+
+async function deleteTodo(id) {
+  try {
+    await api(`/todos/${id}`, { method: "DELETE" });
+    allTodos = allTodos.filter(t => t.id !== id);
+    renderTodos();
+  } catch (e) { toast(e.message, "error"); }
+}
+
+async function clearCompletedTodos() {
+  try {
+    await api("/todos/completed", { method: "DELETE" });
+    allTodos = allTodos.filter(t => !t.done);
+    renderTodos();
+    toast("Completed tasks cleared", "success");
+  } catch (e) { toast(e.message, "error"); }
+}
+
+async function exportData() {
+  try {
+    const data = await api("/export");
+    if (!data) return;
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "family-hub-export-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast("Data exported successfully", "success");
+  } catch (e) { toast(e.message, "error"); }
+}
+
+function requestNotificationPermission() {
+  if ("Notification" in window && Notification.permission === "default") {
+    Notification.requestPermission();
+  }
+}
+
+// ── Members ────────────────────────────────────────────
+let allMembers = [];
+
+async function loadMembers() {
+  try {
+    const data = await api("/users");
+    if (!data) return;
+    allMembers = data.users;
+    // Mark current user online
+    onlineUsers.add(currentUser.id);
+    renderMembers();
+  } catch (e) { console.error("Load members:", e); }
+}
+
+function renderMembers() {
+  const el = document.getElementById("members-list");
+  el.innerHTML = allMembers.map(m => {
+    const online = onlineUsers.has(m.id);
+    const lastSeen = m.last_seen ? formatTime(m.last_seen) : "Never";
+    return `<div class="member">
+      <div class="dot ${online ? "dot-online" : "dot-offline"}"></div>
+      <span>${esc(m.emoji)} ${esc(m.display_name)}</span>
+      <span style="margin-left:auto;font-size:12px;color:var(--txt2)">${m.role === "admin" ? "Admin" : (online ? "Online" : "Last: " + lastSeen)}</span>
+    </div>`;
+  }).join("");
+}
+
+// ── Notes ──────────────────────────────────────────────
+let allNotes = [];
+
+async function loadNotes() {
+  try {
+    const data = await api("/notes");
+    if (!data) return;
+    allNotes = data.notes;
+    renderNotes();
+  } catch (e) { console.error("Load notes:", e); }
+}
+
+function renderNotes() {
+  const el = document.getElementById("notes-list");
+  if (allNotes.length === 0) { el.innerHTML = '<div style="font-size:13px;color:var(--txt2)">No notes yet</div>'; return; }
+  el.innerHTML = allNotes.slice(0, 10).map(n => `
+    <div class="note-card">
+      <div class="note-meta">${esc(n.created_by_name)} · ${formatDate(n.created_at)}</div>
+      <div class="note-title">${esc(n.title)}</div>
+      ${n.content ? `<div class="note-body">${esc(n.content).slice(0, 120)}</div>` : ""}
+      <button class="btn-sm btn-ghost" style="margin-top:4px;font-size:11px" onclick="deleteNote(${n.id})">Delete</button>
+    </div>
+  `).join("");
+}
+
+async function saveNote() {
+  const title = document.getElementById("note-title").value.trim();
+  const content = document.getElementById("note-content").value.trim();
+  if (!title) { toast("Note title required", "error"); return; }
+  try {
+    const data = await api("/notes", { method: "POST", body: JSON.stringify({ title, content }) });
+    if (data) { allNotes.unshift(data.note); renderNotes(); }
+    document.getElementById("note-title").value = "";
+    document.getElementById("note-content").value = "";
+    toast("Note saved", "success");
+  } catch (e) { toast(e.message, "error"); }
+}
+
+async function deleteNote(id) {
+  try {
+    await api(`/notes/${id}`, { method: "DELETE" });
+    allNotes = allNotes.filter(n => n.id !== id);
+    renderNotes();
+  } catch (e) { toast(e.message, "error"); }
+}
+
+// ── Events ─────────────────────────────────────────────
+let allEvents = [];
+
+async function loadEvents() {
+  try {
+    const data = await api("/events");
+    if (!data) return;
+    allEvents = data.events;
+    renderEvents();
+  } catch (e) { console.error("Load events:", e); }
+}
+
+function renderEvents() {
+  const el = document.getElementById("events-list");
+  if (allEvents.length === 0) { el.innerHTML = '<div style="font-size:13px;color:var(--txt2)">No upcoming events</div>'; return; }
+  el.innerHTML = allEvents.map(ev => `
+    <div class="event-item">
+      <div class="event-date">${formatDate(ev.event_date)}${ev.event_time ? " at " + ev.event_time : ""}</div>
+      <div class="event-title">${esc(ev.title)}</div>
+      ${ev.description ? `<div style="font-size:12px;color:var(--txt2)">${esc(ev.description)}</div>` : ""}
+      <button class="btn-sm btn-ghost" style="margin-top:4px;font-size:11px" onclick="deleteEvent(${ev.id})">Delete</button>
+    </div>
+  `).join("");
+}
+
+async function addEvent() {
+  const title = document.getElementById("event-title").value.trim();
+  const date = document.getElementById("event-date").value;
+  const time = document.getElementById("event-time").value || null;
+  const desc = document.getElementById("event-desc").value.trim();
+  if (!title || !date) { toast("Event title and date required", "error"); return; }
+  try {
+    const data = await api("/events", {
+      method: "POST",
+      body: JSON.stringify({ title, event_date: date, event_time: time, description: desc })
+    });
+    if (data) { allEvents.push(data.event); allEvents.sort((a, b) => a.event_date.localeCompare(b.event_date)); renderEvents(); }
+    document.getElementById("event-title").value = "";
+    document.getElementById("event-date").value = "";
+    document.getElementById("event-time").value = "";
+    document.getElementById("event-desc").value = "";
+    toast("Event added", "success");
+  } catch (e) { toast(e.message, "error"); }
+}
+
+async function deleteEvent(id) {
+  try {
+    await api(`/events/${id}`, { method: "DELETE" });
+    allEvents = allEvents.filter(e => e.id !== id);
+    renderEvents();
+  } catch (e) { toast(e.message, "error"); }
+}
+
+// ── Shopping Lists ─────────────────────────────────────
+let allShoppingLists = [];
+let activeListId = null;
+let activeListItems = [];
+
+async function loadShoppingLists() {
+  try {
+    const data = await api("/shopping");
+    if (!data) return;
+    allShoppingLists = data.lists;
+    renderShoppingLists();
+  } catch (e) { console.error("Load shopping:", e); }
+}
+
+function renderShoppingLists() {
+  const el = document.getElementById("shopping-lists");
+  if (allShoppingLists.length === 0) { el.innerHTML = '<div style="font-size:13px;color:var(--txt2)">No lists yet</div>'; return; }
+  el.innerHTML = allShoppingLists.map(l => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer" onclick="openList(${l.id}, '${esc(l.name)}')">
+      <span style="font-size:14px">${esc(l.name)}</span>
+      <span style="margin-left:auto;font-size:12px;color:var(--txt2)">${l.checked_count}/${l.item_count}</span>
+      <button class="btn-sm btn-ghost" onclick="event.stopPropagation();deleteList(${l.id})" style="font-size:11px">✕</button>
+    </div>
+  `).join("");
+}
+
+async function createShoppingList() {
+  const input = document.getElementById("shopping-list-name");
+  const name = input.value.trim();
+  if (!name) return;
+  try {
+    const data = await api("/shopping", { method: "POST", body: JSON.stringify({ name }) });
+    if (data) { allShoppingLists.unshift(data.list); renderShoppingLists(); }
+    input.value = "";
+  } catch (e) { toast(e.message, "error"); }
+}
+
+async function deleteList(id) {
+  try {
+    await api(`/shopping/${id}`, { method: "DELETE" });
+    allShoppingLists = allShoppingLists.filter(l => l.id !== id);
+    if (activeListId === id) { activeListId = null; document.getElementById("shopping-items-panel").style.display = "none"; }
+    renderShoppingLists();
+  } catch (e) { toast(e.message, "error"); }
+}
+
+async function openList(id, name) {
+  activeListId = id;
+  document.getElementById("active-list-name").textContent = name;
+  document.getElementById("shopping-items-panel").style.display = "block";
+  try {
+    const data = await api(`/shopping/${id}/items`);
+    if (!data) return;
+    activeListItems = data.items;
+    renderShoppingItems();
+  } catch (e) { toast(e.message, "error"); }
+}
+
+function renderShoppingItems() {
+  const el = document.getElementById("shopping-items-list");
+  if (activeListItems.length === 0) { el.innerHTML = '<div style="font-size:13px;color:var(--txt2)">No items</div>'; return; }
+  el.innerHTML = activeListItems.map(i => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+      <input type="checkbox" ${i.checked ? "checked" : ""} onchange="toggleItem(${i.id}, this.checked)">
+      <span style="${i.checked ? 'text-decoration:line-through;opacity:.45' : ''};font-size:14px">${esc(i.name)}</span>
+      ${i.quantity ? `<span style="font-size:12px;color:var(--txt2)">(${esc(i.quantity)})</span>` : ""}
+      <button class="btn-sm btn-ghost" onclick="deleteItem(${i.id})" style="margin-left:auto;font-size:11px">✕</button>
+    </div>
+  `).join("");
+}
+
+async function addShoppingItem() {
+  const name = document.getElementById("item-name").value.trim();
+  const qty = document.getElementById("item-qty").value.trim();
+  if (!name || !activeListId) return;
+  try {
+    const data = await api(`/shopping/${activeListId}/items`, {
+      method: "POST", body: JSON.stringify({ name, quantity: qty || null })
+    });
+    if (data) { activeListItems.unshift(data.item); renderShoppingItems(); }
+    document.getElementById("item-name").value = "";
+    document.getElementById("item-qty").value = "";
+  } catch (e) { toast(e.message, "error"); }
+}
+
+async function toggleItem(id, checked) {
+  try {
+    const data = await api(`/shopping/items/${id}`, { method: "PATCH", body: JSON.stringify({ checked }) });
+    if (data) { const i = activeListItems.findIndex(x => x.id === id); if (i >= 0) activeListItems[i] = data.item; renderShoppingItems(); }
+  } catch (e) { toast(e.message, "error"); }
+}
+
+async function deleteItem(id) {
+  try {
+    await api(`/shopping/items/${id}`, { method: "DELETE" });
+    activeListItems = activeListItems.filter(i => i.id !== id);
+    renderShoppingItems();
+  } catch (e) { toast(e.message, "error"); }
+}
+
+// ── Family Journal ─────────────────────────────────────
+let allJournalEntries = [];
+const MOOD_EMOJIS = { happy: "😊", grateful: "🙏", excited: "🎉", neutral: "😐", tired: "😴", sad: "😢" };
+
+async function loadJournal() {
+  try {
+    const data = await api("/journal");
+    if (!data) return;
+    allJournalEntries = data.entries;
+    renderJournal();
+  } catch (e) { console.error("Load journal:", e); }
+}
+
+function renderJournal() {
+  const el = document.getElementById("journal-list");
+  if (allJournalEntries.length === 0) { el.innerHTML = '<div style="font-size:13px;color:var(--txt2)">No entries yet. Share a family moment!</div>'; return; }
+  el.innerHTML = allJournalEntries.slice(0, 10).map(j => `
+    <div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+      <div style="font-size:11px;color:var(--txt2)">${esc(j.emoji)} ${esc(j.created_by_name)} · ${formatDate(j.created_at)} ${MOOD_EMOJIS[j.mood] || ""}</div>
+      <div style="font-weight:600;font-size:14px">${esc(j.title)}</div>
+      ${j.content ? `<div style="font-size:13px;color:var(--txt2);margin-top:2px">${esc(j.content).slice(0, 150)}</div>` : ""}
+      <button class="btn-sm btn-ghost" style="margin-top:4px;font-size:11px" onclick="deleteJournalEntry(${j.id})">Delete</button>
+    </div>
+  `).join("");
+}
+
+async function saveJournalEntry() {
+  const title = document.getElementById("journal-title").value.trim();
+  const content = document.getElementById("journal-content").value.trim();
+  const mood = document.getElementById("journal-mood").value;
+  if (!title) { toast("Journal title required", "error"); return; }
+  try {
+    const data = await api("/journal", { method: "POST", body: JSON.stringify({ title, content, mood }) });
+    if (data) { allJournalEntries.unshift(data.entry); renderJournal(); }
+    document.getElementById("journal-title").value = "";
+    document.getElementById("journal-content").value = "";
+    document.getElementById("journal-mood").value = "neutral";
+    toast("Journal entry saved", "success");
+  } catch (e) { toast(e.message, "error"); }
+}
+
+async function deleteJournalEntry(id) {
+  try {
+    await api(`/journal/${id}`, { method: "DELETE" });
+    allJournalEntries = allJournalEntries.filter(j => j.id !== id);
+    renderJournal();
+  } catch (e) { toast(e.message, "error"); }
+}
+
+// ── Weather ────────────────────────────────────────────
+async function loadWeather() {
+  try {
+    const r = await fetch("https://api.open-meteo.com/v1/forecast?latitude=24.4539&longitude=54.3773&current=temperature_2m,weathercode&timezone=Asia/Dubai");
+    const d = await r.json();
+    const temp = Math.round(d.current.temperature_2m);
+    const codes = { 0: "☀️ Clear", 1: "🌤️ Mainly clear", 2: "⛅ Partly cloudy", 3: "☁️ Overcast", 45: "🌫️ Fog", 51: "🌦️ Drizzle", 61: "🌧️ Rain", 63: "🌧️ Moderate rain", 65: "🌧️ Heavy rain", 71: "🌨️ Snow", 80: "🌦️ Showers", 95: "⛈️ Thunderstorm" };
+    document.getElementById("weather-temp").textContent = temp + "°C";
+    document.getElementById("weather-desc").textContent = codes[d.current.weathercode] || "Clear";
+  } catch {
+    document.getElementById("weather-desc").textContent = "Weather unavailable";
+  }
+}
+
+// ── Health ─────────────────────────────────────────────
+async function loadHealth() {
+  try {
+    const data = await api("/health");
+    const uptime = Math.floor(data.uptime);
+    const h = Math.floor(uptime / 3600);
+    const m = Math.floor((uptime % 3600) / 60);
+    document.getElementById("health-status").innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0">
+        <div class="dot dot-online"></div><span>Family Hub API</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--txt2)">Up ${h}h ${m}m</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0">
+        <div class="dot ${ws && ws.readyState === 1 ? "dot-online" : "dot-offline"}"></div>
+        <span>WebSocket</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--txt2)">${ws && ws.readyState === 1 ? "Connected" : "Disconnected"}</span>
+      </div>
+    `;
+  } catch {
+    document.getElementById("health-status").innerHTML = '<div style="color:var(--red)">API unreachable</div>';
+  }
+}
+
+// ── Settings ───────────────────────────────────────────
+async function changePassword() {
+  const cur = document.getElementById("cur-pwd").value;
+  const newP = document.getElementById("new-pwd").value;
+  const confirm = document.getElementById("confirm-pwd").value;
+  const msgEl = document.getElementById("pwd-msg");
+
+  if (!cur || !newP) { msgEl.style.color = "var(--red)"; msgEl.textContent = "All fields required"; return; }
+  if (newP !== confirm) { msgEl.style.color = "var(--red)"; msgEl.textContent = "Passwords don't match"; return; }
+  if (newP.length < 6) { msgEl.style.color = "var(--red)"; msgEl.textContent = "Min 6 characters"; return; }
+
+  try {
+    await api("/auth/change-password", {
+      method: "POST",
+      body: JSON.stringify({ current_password: cur, new_password: newP })
+    });
+    msgEl.style.color = "var(--green)";
+    msgEl.textContent = "Password changed!";
+    setTimeout(() => closeSettings(), 1500);
+  } catch (e) {
+    msgEl.style.color = "var(--red)";
+    msgEl.textContent = e.message;
+  }
+}
+
+function openSettings() {
+  document.getElementById("settings-modal").style.display = "flex";
+  document.getElementById("cur-pwd").value = "";
+  document.getElementById("new-pwd").value = "";
+  document.getElementById("confirm-pwd").value = "";
+  document.getElementById("pwd-msg").textContent = "";
+}
+
+function closeSettings() {
+  document.getElementById("settings-modal").style.display = "none";
+}
+
+// ── Voice Calling (WebRTC) ──────────────────────────────
+let peerConnection = null;
+let localStream = null;
+let callTimerInterval = null;
+let callSeconds = 0;
+let isMuted = false;
+let inCall = false;
+let pendingOffer = null;
+let callTargetId = null;
+
+const ICE_SERVERS = { iceServers: [
+  { urls: "stun:stun.l.google.com:19302" },
+  { urls: "stun:stun1.l.google.com:19302" }
+]};
+
+function openCallPicker() {
+  const el = document.getElementById("call-member-list");
+  el.innerHTML = allMembers
+    .filter(m => m.id !== currentUser.id)
+    .map(m => {
+      const online = onlineUsers.has(m.id);
+      return `<div class="member" style="cursor:${online ? "pointer" : "default"};opacity:${online ? 1 : .4}" ${online ? `onclick="startCall('${m.id}','${esc(m.display_name)}','${esc(m.emoji)}')"` : ""}>
+        <div class="dot ${online ? "dot-online" : "dot-offline"}"></div>
+        <span>${esc(m.emoji)} ${esc(m.display_name)}</span>
+        <span style="margin-left:auto;font-size:12px;color:var(--txt2)">${online ? "Available" : "Offline"}</span>
+      </div>`;
+    }).join("");
+  document.getElementById("call-picker").style.display = "flex";
+}
+
+async function startCall(targetId, name, emoji) {
+  document.getElementById("call-picker").style.display = "none";
+  callTargetId = targetId;
+  showCallUI(name, emoji, "Calling...");
+
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    peerConnection = new RTCPeerConnection(ICE_SERVERS);
+
+    localStream.getTracks().forEach(t => peerConnection.addTrack(t, localStream));
+
+    peerConnection.ontrack = (e) => {
+      const remoteAudio = new Audio();
+      remoteAudio.srcObject = e.streams[0];
+      remoteAudio.id = "remote-audio";
+      remoteAudio.autoplay = true;
+      document.body.appendChild(remoteAudio);
+      applyAudioOutput(remoteAudio);
+    };
+
+    peerConnection.onicecandidate = (e) => {
+      if (e.candidate && ws && ws.readyState === 1) {
+        ws.send(JSON.stringify({ type: "call_ice", targetUserId: targetId, candidate: e.candidate }));
+      }
+    };
+
+    peerConnection.onconnectionstatechange = () => {
+      if (peerConnection.connectionState === "connected") {
+        document.getElementById("call-status").textContent = "Connected";
+        startCallTimer();
+      }
+      if (["disconnected", "failed", "closed"].includes(peerConnection.connectionState)) {
+        endCall();
+      }
+    };
+
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+
+    ws.send(JSON.stringify({ type: "call_offer", targetUserId: targetId, sdp: offer }));
+    ws.send(JSON.stringify({ type: "call_ring", callType: "voice" }));
+    inCall = true;
+  } catch (e) {
+    toast("Microphone access required for calls", "error");
+    endCall();
+  }
+}
+
+async function acceptCall() {
+  document.getElementById("incoming-call").style.display = "none";
+  if (!pendingOffer) return;
+
+  const { fromUserId, fromName, fromEmoji, sdp } = pendingOffer;
+  callTargetId = fromUserId;
+  showCallUI(fromName, fromEmoji, "Connecting...");
+
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    peerConnection = new RTCPeerConnection(ICE_SERVERS);
+
+    localStream.getTracks().forEach(t => peerConnection.addTrack(t, localStream));
+
+    peerConnection.ontrack = (e) => {
+      const remoteAudio = new Audio();
+      remoteAudio.srcObject = e.streams[0];
+      remoteAudio.id = "remote-audio";
+      remoteAudio.autoplay = true;
+      document.body.appendChild(remoteAudio);
+      applyAudioOutput(remoteAudio);
+    };
+
+    peerConnection.onicecandidate = (e) => {
+      if (e.candidate && ws && ws.readyState === 1) {
+        ws.send(JSON.stringify({ type: "call_ice", targetUserId: fromUserId, candidate: e.candidate }));
+      }
+    };
+
+    peerConnection.onconnectionstatechange = () => {
+      if (peerConnection.connectionState === "connected") {
+        document.getElementById("call-status").textContent = "Connected";
+        startCallTimer();
+      }
+      if (["disconnected", "failed", "closed"].includes(peerConnection.connectionState)) {
+        endCall();
+      }
+    };
+
+    await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
+    const answer = await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(answer);
+
+    ws.send(JSON.stringify({ type: "call_answer", targetUserId: fromUserId, sdp: answer }));
+    inCall = true;
+  } catch (e) {
+    toast("Microphone access required for calls", "error");
+    endCall();
+  }
+  pendingOffer = null;
+}
+
+function declineCall() {
+  if (pendingOffer) {
+    ws.send(JSON.stringify({ type: "call_hangup", targetUserId: pendingOffer.fromUserId }));
+  }
+  document.getElementById("incoming-call").style.display = "none";
+  pendingOffer = null;
+}
+
+function endCall() {
+  if (peerConnection) { peerConnection.close(); peerConnection = null; }
+  if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+  const remoteAudio = document.getElementById("remote-audio");
+  if (remoteAudio) remoteAudio.remove();
+  if (callTargetId && ws && ws.readyState === 1) {
+    ws.send(JSON.stringify({ type: "call_hangup", targetUserId: callTargetId }));
+  }
+  document.getElementById("call-overlay").style.display = "none";
+  document.getElementById("incoming-call").style.display = "none";
+  if (callTimerInterval) { clearInterval(callTimerInterval); callTimerInterval = null; }
+  callSeconds = 0;
+  isMuted = false;
+  inCall = false;
+  callTargetId = null;
+  document.getElementById("btn-mute").textContent = "🎤";
+  document.getElementById("btn-mute").classList.remove("active");
+}
+
+function showCallUI(name, emoji, status) {
+  document.getElementById("call-avatar").textContent = emoji || "📞";
+  document.getElementById("call-peer-name").textContent = name || "Unknown";
+  document.getElementById("call-status").textContent = status;
+  document.getElementById("call-timer").textContent = "00:00";
+  document.getElementById("call-overlay").style.display = "flex";
+  enumerateAudioDevices();
+}
+
+function startCallTimer() {
+  callSeconds = 0;
+  if (callTimerInterval) clearInterval(callTimerInterval);
+  callTimerInterval = setInterval(() => {
+    callSeconds++;
+    const m = String(Math.floor(callSeconds / 60)).padStart(2, "0");
+    const s = String(callSeconds % 60).padStart(2, "0");
+    document.getElementById("call-timer").textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+function toggleMute() {
+  if (!localStream) return;
+  isMuted = !isMuted;
+  localStream.getAudioTracks().forEach(t => { t.enabled = !isMuted; });
+  document.getElementById("btn-mute").textContent = isMuted ? "🔇" : "🎤";
+  document.getElementById("btn-mute").classList.toggle("active", isMuted);
+}
+
+// ── Audio Output Device Switching ──────────────────────
+async function enumerateAudioDevices() {
+  const select = document.getElementById("audio-output-select");
+  select.innerHTML = '<option value="default">Default Speaker</option>';
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const outputs = devices.filter(d => d.kind === "audiooutput");
+    outputs.forEach(d => {
+      const opt = document.createElement("option");
+      opt.value = d.deviceId;
+      // Label earpiece/speaker/bluetooth clearly
+      let label = d.label || `Speaker ${d.deviceId.slice(0, 6)}`;
+      if (label.toLowerCase().includes("earpiece")) label = "📱 Earpiece";
+      else if (label.toLowerCase().includes("speaker") || label.toLowerCase().includes("built-in")) label = "🔊 Loudspeaker";
+      else if (label.toLowerCase().includes("bluetooth") || label.toLowerCase().includes("airpod") || label.toLowerCase().includes("headset")) label = "🎧 " + label;
+      opt.textContent = label;
+      select.appendChild(opt);
+    });
+  } catch { /* enumerateDevices not supported */ }
+}
+
+async function switchAudioOutput(deviceId) {
+  const remoteAudio = document.getElementById("remote-audio");
+  if (!remoteAudio) return;
+  try {
+    if (typeof remoteAudio.setSinkId === "function") {
+      await remoteAudio.setSinkId(deviceId);
+      toast(`Audio output switched`, "success");
+    } else {
+      toast("Audio switching not supported in this browser", "error");
+    }
+  } catch (e) {
+    toast(`Cannot switch audio: ${e.message}`, "error");
+  }
+}
+
+function applyAudioOutput(audioEl) {
+  const deviceId = document.getElementById("audio-output-select").value;
+  if (deviceId && deviceId !== "default" && typeof audioEl.setSinkId === "function") {
+    audioEl.setSinkId(deviceId).catch(() => {});
+  }
+}
+
+function toggleSpeakerMode() {
+  const select = document.getElementById("audio-output-select");
+  const options = [...select.options];
+  // Find speaker option
+  const speakerOpt = options.find(o => o.textContent.includes("Loudspeaker") || o.textContent.includes("Speaker"));
+  const earpieceOpt = options.find(o => o.textContent.includes("Earpiece"));
+  const btn = document.getElementById("btn-speaker");
+
+  if (speakerOpt && select.value !== speakerOpt.value) {
+    select.value = speakerOpt.value;
+    switchAudioOutput(speakerOpt.value);
+    btn.classList.add("active");
+    btn.textContent = "🔊";
+  } else if (earpieceOpt) {
+    select.value = earpieceOpt.value;
+    switchAudioOutput(earpieceOpt.value);
+    btn.classList.remove("active");
+    btn.textContent = "📱";
+  } else {
+    // Toggle between default and first non-default
+    const alt = options.find(o => o.value !== select.value && o.value !== "default");
+    if (alt) { select.value = alt.value; switchAudioOutput(alt.value); }
+  }
+}
+
+// Handle incoming WebRTC signals
+function handleCallSignal(msg) {
+  if (msg.type === "call_offer") {
+    if (inCall) {
+      ws.send(JSON.stringify({ type: "call_hangup", targetUserId: msg.fromUserId }));
+      return;
+    }
+    pendingOffer = msg;
+    document.getElementById("incoming-avatar").textContent = msg.fromEmoji || "📞";
+    document.getElementById("incoming-name").textContent = `${msg.fromName || "Someone"} is calling...`;
+    document.getElementById("incoming-call").style.display = "flex";
+  }
+
+  if (msg.type === "call_answer" && peerConnection) {
+    peerConnection.setRemoteDescription(new RTCSessionDescription(msg.sdp));
+  }
+
+  if (msg.type === "call_ice" && peerConnection) {
+    peerConnection.addIceCandidate(new RTCIceCandidate(msg.candidate)).catch(() => {});
+  }
+
+  if (msg.type === "call_hangup") {
+    endCall();
+    toast("Call ended", "info");
+  }
+
+  if (msg.type === "call_error") {
+    toast(msg.error, "error");
+    endCall();
+  }
+}
+
+// ── Voice Messages ─────────────────────────────────────
+let mediaRecorder = null;
+let recordedChunks = [];
+let isRecording = false;
+
+async function startVoiceRecord() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream, { mimeType: getSupportedMimeType() });
+    recordedChunks = [];
+
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) recordedChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
+      if (blob.size < 1000) { toast("Recording too short", "error"); return; }
+      sendVoiceMessage(blob);
+    };
+
+    mediaRecorder.start();
+    isRecording = true;
+    document.getElementById("btn-voice-record").textContent = "⏹️";
+    document.getElementById("btn-voice-record").style.color = "var(--red)";
+  } catch {
+    toast("Microphone access required", "error");
+  }
+}
+
+function stopVoiceRecord() {
+  if (mediaRecorder && mediaRecorder.state === "recording") {
+    mediaRecorder.stop();
+  }
+  isRecording = false;
+  document.getElementById("btn-voice-record").textContent = "🎙️";
+  document.getElementById("btn-voice-record").style.color = "";
+}
+
+function getSupportedMimeType() {
+  const types = ["audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus", "audio/mp4"];
+  for (const t of types) { if (MediaRecorder.isTypeSupported(t)) return t; }
+  return "audio/webm";
+}
+
+async function sendVoiceMessage(blob) {
+  // Convert to base64 data URL and send as a special chat message
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    const dataUrl = reader.result;
+    const content = `[voice:${dataUrl}]`;
+    if (ws && ws.readyState === 1) {
+      ws.send(JSON.stringify({ type: "chat", content }));
+    }
+  };
+  reader.readAsDataURL(blob);
+}
+
+// Override renderMessages to handle voice messages
+const _origRenderMessages = renderMessages;
+renderMessages = function() {
+  const box = document.getElementById("chat-box");
+  box.innerHTML = allMessages.map(m => {
+    const isMe = m.user_id === currentUser.id;
+    let content;
+    if (m.content.startsWith("[voice:")) {
+      const dataUrl = m.content.slice(7, -1);
+      content = `<div class="voice-msg">
+        <button onclick="playVoice(this,'${dataUrl}')">▶️</button>
+        <div class="vm-bar"><div class="vm-fill" style="width:0%"></div></div>
+        <span class="vm-dur">0:00</span>
+      </div>`;
+    } else {
+      content = esc(m.content);
+    }
+    return `<div class="chat-msg ${isMe ? "me" : "other"}">
+      ${!isMe ? `<div class="sender">${esc(m.emoji)} ${esc(m.display_name)}</div>` : ""}
+      ${content}
+      <div class="meta">${formatTime(m.created_at)}</div>
+    </div>`;
+  }).join("");
+  box.scrollTop = box.scrollHeight;
+};
+
+function playVoice(btn, dataUrl) {
+  const audio = new Audio(dataUrl);
+  const bar = btn.parentElement.querySelector(".vm-fill");
+  const dur = btn.parentElement.querySelector(".vm-dur");
+  btn.textContent = "⏸️";
+
+  audio.onloadedmetadata = () => {
+    const totalSec = Math.floor(audio.duration);
+    dur.textContent = `0:${String(totalSec).padStart(2, "0")}`;
+  };
+
+  audio.ontimeupdate = () => {
+    if (audio.duration) {
+      bar.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
+    }
+  };
+
+  audio.onended = () => {
+    btn.textContent = "▶️";
+    bar.style.width = "0%";
+  };
+
+  // Apply selected audio output
+  const deviceId = document.getElementById("audio-output-select")?.value;
+  if (deviceId && deviceId !== "default" && typeof audio.setSinkId === "function") {
+    audio.setSinkId(deviceId).catch(() => {});
+  }
+
+  audio.play();
+}
+
+// Listen for device changes (plug/unplug bluetooth etc)
+if (navigator.mediaDevices) {
+  navigator.mediaDevices.addEventListener("devicechange", enumerateAudioDevices);
+}
+
+// ── Event Listeners ────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  // Login
+  document.getElementById("login-btn").addEventListener("click", login);
+  document.getElementById("login-pwd").addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
+  document.getElementById("login-user").addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("login-pwd").focus(); });
+
+  // Chat
+  document.getElementById("btn-send").addEventListener("click", sendMessage);
+  document.getElementById("chat-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage();
+    else emitTyping();
+  });
+
+  // Voice record
+  document.getElementById("btn-voice-record").addEventListener("click", () => {
+    if (isRecording) stopVoiceRecord(); else startVoiceRecord();
+  });
+
+  // Calling
+  document.getElementById("btn-call").addEventListener("click", openCallPicker);
+  document.getElementById("btn-close-call-picker").addEventListener("click", () => {
+    document.getElementById("call-picker").style.display = "none";
+  });
+  document.getElementById("btn-hangup").addEventListener("click", endCall);
+  document.getElementById("btn-mute").addEventListener("click", toggleMute);
+  document.getElementById("btn-speaker").addEventListener("click", toggleSpeakerMode);
+  document.getElementById("btn-accept").addEventListener("click", acceptCall);
+  document.getElementById("btn-decline").addEventListener("click", declineCall);
+  document.getElementById("audio-output-select").addEventListener("change", (e) => {
+    switchAudioOutput(e.target.value);
+  });
+
+  // Todos
+  document.getElementById("btn-add-todo").addEventListener("click", addTodo);
+  document.getElementById("todo-input").addEventListener("keydown", (e) => { if (e.key === "Enter") addTodo(); });
+  document.getElementById("btn-clear-completed").addEventListener("click", clearCompletedTodos);
+
+  // Notes
+  document.getElementById("btn-save-note").addEventListener("click", saveNote);
+
+  // Events
+  document.getElementById("btn-add-event").addEventListener("click", addEvent);
+
+  // Shopping
+  document.getElementById("btn-create-list").addEventListener("click", createShoppingList);
+  document.getElementById("shopping-list-name").addEventListener("keydown", (e) => { if (e.key === "Enter") createShoppingList(); });
+  document.getElementById("btn-add-item").addEventListener("click", addShoppingItem);
+  document.getElementById("item-name").addEventListener("keydown", (e) => { if (e.key === "Enter") addShoppingItem(); });
+
+  // Journal
+  document.getElementById("btn-save-journal").addEventListener("click", saveJournalEntry);
+
+  // Export
+  document.getElementById("btn-export").addEventListener("click", exportData);
+
+  // Settings
+  document.getElementById("btn-settings").addEventListener("click", openSettings);
+  document.getElementById("btn-close-settings").addEventListener("click", closeSettings);
+  document.getElementById("btn-change-pwd").addEventListener("click", changePassword);
+  document.getElementById("settings-modal").addEventListener("click", (e) => {
+    if (e.target === document.getElementById("settings-modal")) closeSettings();
+  });
+
+  // Logout
+  document.getElementById("btn-logout").addEventListener("click", logout);
+
+  // Auto-refresh health every 30s
+  setInterval(loadHealth, 30000);
+
+  // Try auto-login
+  tryAutoLogin();
+});
+</script>
+</body>
+</html>
